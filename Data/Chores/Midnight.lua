@@ -2,12 +2,83 @@ local _, Addon = ...
 local L = Addon.L
 
 
+local CQL_IsOnQuest = C_QuestLog.IsOnQuest
+
 Addon.data.chores.choresMidnight = {
     key = 'midnight',
     name = EXPANSION_NAME11,
     order = 20,
     minimumLevel = 80,
     categories = {
+        {
+            key = 'patch_12_0_7',
+            quests = {
+                {
+                    key = 'showdownLevel',
+                    minimumLevel = 80,
+                    filter = function()
+                        return UnitLevel('player') < 90
+                    end,
+                    entries = {
+                        { quest = 96716 }, -- Showdown on Val
+                        { quest = 96720 }, -- Showdown on Naigtal
+                    },
+                },
+                {
+                    key = 'showdownNormal',
+                    minimumLevel = 90,
+                    entries = {
+                        { quest = 96713 }, -- Showdown on Val
+                        { quest = 96717 }, -- Showdown on Naigtal
+                    },
+                },
+                {
+                    key = 'showdownHeroic',
+                    minimumLevel = 90,
+                    entries = {
+                        { quest = 96714 }, -- Showdown on Val: Heroic
+                        { quest = 96718 }, -- Showdown on Naigtal: Heroic
+                    },
+                },
+                {
+                    key = 'dangerousHeroic',
+                    minimumLevel = 90,
+                    requiredQuest = 97218, -- HQT for Showdown?
+                    filter = function()
+                        return CQL_IsOnQuest(97081) == false and CQL_IsOnQuest(97087) == false
+                    end,
+                    entries = {
+                        { quest = 97083 }, -- Dangerous Enemies: Val (Heroic)
+                        { quest = 97086 }, -- Dangerous Enemies: Naigtal (Heroic)
+                    },
+                },
+                {
+                    key = 'disruptionHeroic',
+                    minimumLevel = 90,
+                    requiredQuest = 97218, -- HQT for Showdown?
+                    filter = function()
+                        return CQL_IsOnQuest(97083) == false and CQL_IsOnQuest(97086) == false
+                    end,
+                    entries = {
+                        { quest = 97081 }, -- More Disruptions: Val (Heroic)
+                        { quest = 97087 }, -- More Disruption: Naigtal (Heroic)
+                    },
+                },
+            },
+        },
+        {
+            key = 'patch_12_0_5',
+            quests = {
+                {
+                    key = 'voidAssaults',
+                    minimumLevel = 80,
+                    entries = {
+                        { quest = 94385 }, -- Void Assaults: Eversong Woods
+                        { quest = 94386 }, -- Void Assaults: Zul'Aman
+                    },
+                },
+            },
+        },
         {
             key = 'patch_12_0_0',
             quests = {
@@ -32,10 +103,13 @@ Addon.data.chores.choresMidnight = {
                         { quest = 93911 }, -- Midnight: Dungeons
                         { quest = 93769 }, -- Midnight: Housing
                         { quest = 93891 }, -- Midnight: Legends of the Haranir
+                        { quest = 96727 }, -- Midnight: Offworld Showdowns
                         { quest = 93910 }, -- Midnight: Prey
                         { quest = 93912 }, -- Midnight: Raid
+                        { quest = 95843 }, -- Midnight: Ritual Sites
                         { quest = 93889 }, -- Midnight: Saltheril's Soiree
                         { quest = 93892 }, -- Midnight: Stormarion Assault
+                        { quest = 95842 }, -- Midnight: Void Assaults
                         { quest = 93913 }, -- Midnight: World Boss
                         { quest = 93766 }, -- Midnight: World Quests
                     },
@@ -48,8 +122,31 @@ Addon.data.chores.choresMidnight = {
                     },
                 },
                 {
+                    key = 'legends',
+                    minimumLevel = 80,
+                    entries = {
+                        -- 89268 Lost Legends
+                        { quest = 88993, unlockQuest = 89268 }, -- Wey'nan's Ward
+                        { quest = 88994, unlockQuest = 89268 }, -- The Cauldron of Echoes
+                        { quest = 88995, unlockQuest = 89268 }, -- Aln'hara's Bloom
+                        { quest = 88996, unlockQuest = 89268 }, -- The Echoless Flame
+                        { quest = 88997, unlockQuest = 89268 }, -- Russula's Outreach
+                        { quest = 90733, unlockQuest = 89268 }, -- The Listener
+                        { quest = 90734, unlockQuest = 89268 }, -- In the Name of the Goddess
+                    },
+                },
+                {
+                    key = 'soireeInvite',
+                    minimumLevel = 80,
+                    oncePerAccount = true,
+                    entries = {
+                        { quest = 89289 }, -- Favor of the Court
+                    }
+                },
+                {
                     key = 'soiree',
                     minimumLevel = 80,
+                    requiredQuest = 89290,
                     entries = {
                         { quest = 90573 }, -- Fortify the Runestones: Magisters
                         { quest = 90574 }, -- Fortify the Runestones: Blood Knights
@@ -97,35 +194,30 @@ Addon.data.chores.choresMidnight = {
                         { quest = 93758 }, -- Nexus-Point Xenas
                     },
                 },
-            },
-        },
-        {
-            key = 'leveling',
-            minimumLevel = 80,
-            quests = {
                 {
-                    key = 'delves',
-                    minimumLevel = 80,
-                    pick = 8,
-                    filter = function()
-                        return UnitLevel('player') < 90
-                    end,
+                    key = 'worldBoss',
+                    minimumLevel = 90,
+                    alwaysQuestName = true,
                     entries = {
-                        -- Eversong Woods
-                        { quest = 93384 }, -- Delver's Call: Collegiate Calamity
-                        { quest = 93372 }, -- Delver's Call: Shadow Enclave
-                        -- Zul'Aman
-                        { quest = 93409 }, -- Delver's Call: Atal'Aman
-                        { quest = 93410 }, -- Delver's Call: Twilight Crypts
-                        -- Harandar
-                        { quest = 93421 }, -- Delver's Call: The Grudge Pit
-                        { quest = 93416 }, -- Delver's Call: The Gulf of Memory
-                        -- Voidstorm
-                        { quest = 93428 }, -- Delver's Call: Shadowguard Point
-                        { quest = 93427 }, -- Delver's Call: Sunkiller Sanctum
+                        { quest = 92123 }, -- Cragpine
+                        { quest = 92560 }, -- Lu'ashal
+                        { quest = 92636 }, -- Predaxas
+                        { quest = 92034 }, -- Thorm'belan
                     },
                 },
-            }
+                {
+                    key = 'worldBossFirst',
+                    minimumLevel = 90,
+                    alwaysQuestName = true,
+                    oncePerAccount = true,
+                    entries = {
+                        { quest = 92127 }, -- Cragpine
+                        { quest = 92128 }, -- Lu'ashal
+                        { quest = 92129 }, -- Predaxas
+                        { quest = 92130 }, -- Thorm'belan
+                    },
+                },
+            },
         },
     },
 }
